@@ -8,7 +8,8 @@ namespace Lab3
     {
         static void Main(string[] args)
         {
-            RandomSQLDatabase db = new();
+            MemoryCacheStore cacheStore = new MemoryCacheStore();
+            RandomSQLDatabase db = new(cacheStore);
             var order = new Order
             {
                 Id = "ORD-256-X",
@@ -25,9 +26,10 @@ namespace Lab3
             // 2. Инициализация процессора
             var processor = new OrderProcessor(db);
 
-            // 3. Обработка заказа
+            // 3. Обработка заказа + обработка того же заказа
             try
             {
+                processor.Process(order);
                 processor.Process(order);
             }
             catch (Exception e)
@@ -36,12 +38,14 @@ namespace Lab3
                 throw;
             }
 
+            
+
             // 4. Работа с обслуживанием
             Console.WriteLine("\nTesting Warehouse Stuff:");
             var workers = new IWarehouseWorker[]{
                          new HumanManager(),
                          new RobotPacker() { Model = "George Droid" },
-    };
+            };
 
             Warehouse.ManageWarehouse(workers);
         }

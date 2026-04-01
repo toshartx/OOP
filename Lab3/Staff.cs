@@ -27,7 +27,7 @@ interface IWarehouseWorker : IWorkExecutor {}
 /// <summary>
 /// HumanManager - Человек.
 /// </summary>
-class HumanManager : IWorkExecutor, ILeadSwingingCapable, IRestCapable, IMeetingAttendee
+class HumanManager : IWarehouseWorker, ILeadSwingingCapable, IRestCapable, IMeetingAttendee
 {
     public void ProcessOrder()
     {
@@ -54,7 +54,7 @@ class HumanManager : IWorkExecutor, ILeadSwingingCapable, IRestCapable, IMeeting
 /// <summary>
 /// RobotPacker - Робот.
 /// </summary>
-class RobotPacker : IWorkExecutor, IRestCapable
+class RobotPacker : IWarehouseWorker, IRestCapable
 {
     public required string Model { get; init; }
 
