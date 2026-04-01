@@ -8,6 +8,6 @@ namespace LR2
 {
     internal interface IClassroom
     {
-        public void RepairClassroom();
+        public void Repair();
     }
 }

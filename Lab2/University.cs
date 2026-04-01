@@ -36,21 +36,21 @@ namespace LR2
         //    return new Department(depName, $"+37529{new Random().Next(1000000, 9999999)}", $"{depName.ToLower().Replace(" ","")}@email.com", "");
         //}
 
-        //public void AddDepartment(Department department)
-        //{
-        //    if (!_departments.Contains(department))
-        //    {
-        //        _departments.Add(department);
-        //    }
-        //}
+        public void AddDepartment(Department department)
+        {
+            if (!_departments.Contains(department))
+            {
+                _departments.Add(department);
+            }
+        }
 
-        //public void RemoveDepartment(Department department)
-        //{
-        //    if (_departments.Contains(department))
-        //    {
-        //        _departments.Remove(department);
-        //    }
-        //}
+        public void RemoveDepartment(Department department)
+        {
+            if (_departments.Contains(department))
+            {
+                _departments.Remove(department);
+            }
+        }
 
         //public StudyGroup GetStudyGroup(string specialty, int course)
         //{

@@ -9,7 +9,7 @@ namespace LR2
     internal class Practic : Classroom
     {
         public Practic(int number) : base(number) { }
-        public override void RepairClassroom()
+        public override void Repair()
         {
             if (Status != ClassroomStatus.Fine)
             {

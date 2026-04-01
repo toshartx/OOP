@@ -30,6 +30,6 @@ namespace LR2
         }
         public int Number { get; private set; }
         public ClassroomStatus Status { get; protected set; }
-        public abstract void RepairClassroom();
+        public abstract void Repair();
     }
 }
