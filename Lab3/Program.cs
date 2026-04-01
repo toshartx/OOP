@@ -1,4 +1,5 @@
-﻿using Orders;
+﻿using LR3;
+using Orders;
 using System.Net;
 
 namespace Lab3
@@ -7,6 +8,7 @@ namespace Lab3
     {
         static void Main(string[] args)
         {
+            RandomSQLDatabase db = new();
             var order = new Order
             {
                 Id = "ORD-256-X",
@@ -16,11 +18,12 @@ namespace Lab3
                     new() { Id = "2", Name = "UNATCO Pass Card", Price = 50 },
                 ],
                 ClientEmail = "jeevacation@gmail.com",
-                Destination = new Address() { City = "Agartha", Street = "33 Thomas Street", Zip = "[REDACTED]" }
+                Destination = new Address() { City = "Agartha", Street = "33 Thomas Street", Zip = "[REDACTED]" },
+                Card = new DiscountCard(DiscountCardTypes.Silver)
             };
 
             // 2. Инициализация процессора
-            var processor = new OrderProcessor();
+            var processor = new OrderProcessor(db);
 
             // 3. Обработка заказа
             try
@@ -36,8 +39,8 @@ namespace Lab3
             // 4. Работа с обслуживанием
             Console.WriteLine("\nTesting Warehouse Stuff:");
             var workers = new IWarehouseWorker[]{
-        new HumanManager(),
-        new RobotPacker() { Model = "George Droid" },
+                         new HumanManager(),
+                         new RobotPacker() { Model = "George Droid" },
     };
 
             Warehouse.ManageWarehouse(workers);
