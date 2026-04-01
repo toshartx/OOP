@@ -6,18 +6,28 @@
 
 namespace Orders;
 
-interface IWarehouseWorker
+interface IWorkExecutor
 {
     void ProcessOrder();
+}
+interface IMeetingAttendee
+{
     void AttendMeeting();
+}
+interface IRestCapable
+{
     void GetRest();
+}
+interface ILeadSwingingCapable
+{
     void SwingingTheLead();
 }
+interface IWarehouseWorker : IWorkExecutor {}
 
 /// <summary>
 /// HumanManager - Человек.
 /// </summary>
-class HumanManager : IWarehouseWorker
+class HumanManager : IWorkExecutor, ILeadSwingingCapable, IRestCapable, IMeetingAttendee
 {
     public void ProcessOrder()
     {
@@ -44,7 +54,7 @@ class HumanManager : IWarehouseWorker
 /// <summary>
 /// RobotPacker - Робот.
 /// </summary>
-class RobotPacker : IWarehouseWorker
+class RobotPacker : IWorkExecutor, IRestCapable
 {
     public required string Model { get; init; }
 
@@ -56,16 +66,6 @@ class RobotPacker : IWarehouseWorker
     public void GetRest()
     {
         Console.WriteLine("Robot was taken for maintenance");
-    }
-
-    public void AttendMeeting()
-    {
-        Console.WriteLine("ERROR: Robot cannot attend meetings");
-    }
-
-    public void SwingingTheLead()
-    {
-        throw new InvalidOperationException("CRITICAL ERROR: Robot cannot waste our money (we hope so)");
     }
 }
 
@@ -82,9 +82,18 @@ static class Warehouse
         foreach (var worker in workers)
         {
             worker.ProcessOrder();
-            worker.AttendMeeting();
-            worker.GetRest();
-            worker.SwingingTheLead();
+            if (worker is IMeetingAttendee attendee)
+            {
+                attendee.AttendMeeting();
+            }
+            if (worker is IRestCapable restCapable) 
+            {
+                restCapable.GetRest();
+            }
+            if (worker is ILeadSwingingCapable leadSwingingCapable)
+            {
+                leadSwingingCapable.SwingingTheLead();
+            }
         }
     }
 }
