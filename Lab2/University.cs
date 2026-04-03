@@ -102,6 +102,11 @@ namespace LR2
                     empl.DoWork();
                 }
                 catch (Exception) { }
+                try
+                {
+                    empl.DoWork(4);
+                }
+                catch (Exception) { }
             }
         }
 
@@ -115,14 +120,13 @@ namespace LR2
 
         public void RefreshUniversity()
         {
-            foreach (dynamic classroom in _classrooms)
+            foreach (var classroom in _classrooms)
             {
-                try
+                classroom.Repair();
+                if (classroom is Laboratory lab)
                 {
-                    classroom.RepairClassroom();
-                    classroom.SetupEquipment();
+                    lab.SetupEquipment();
                 }
-                catch (Exception) { }
             }
         }
 
