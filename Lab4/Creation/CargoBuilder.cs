@@ -7,9 +7,21 @@ using LR4.Models;
 
 namespace LR4.Creation
 {
-    class CargoBuilder
+    //interface ICargoBuilder
+    //{
+    //    public Cargo Build();
+    //}
+
+    //interface IDefaultCargoBuilder : ICargoBuilder
+    //{
+    //    public IDefaultCargoBuilder WithMass(double mass);
+    //    public IDefaultCargoBuilder WithCost(double cost);
+    //    public IDefaultCargoBuilder WithName(string name);
+    //}
+
+    class CargoBuilder // : IDefaultCargoBuilder
     {
-        public Cargo Cargo { get; set; } = new Cargo();
+        public Cargo Cargo { get; private set; } = new Cargo();
         public CargoBuilder WithMass(double mass)
         {
             Cargo.Mass = mass;
