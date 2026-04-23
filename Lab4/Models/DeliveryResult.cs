@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LR4.Models
+{
+    class DeliveryResult
+    {
+        public double TotalTime { get; set; }
+        public double TotalCost { get; set; }
+        public required DeliveryRequest Request { get; set; }
+        public override string ToString()
+        {
+            return $"{TotalTime} - время доставки\n" +
+                $"{TotalCost} - стоимость доставки\n" +
+                $"{Request}";
+        }
+    }
+}
