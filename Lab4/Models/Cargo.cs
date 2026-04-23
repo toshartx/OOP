@@ -16,5 +16,10 @@ namespace LR4.Models
         {
             return CostPerKg * Mass;
         }
+
+        public override string ToString()
+        {
+            return $"{Name} - {Cost()} р";
+        }
     }
 }

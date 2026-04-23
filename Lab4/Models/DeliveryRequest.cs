@@ -14,7 +14,7 @@ namespace LR4.Models
 
         public override string ToString()
         {
-            return $"[{string.Join("; ", Cargos.Select(c => $"{c.Name} - {c.Cost()} р"))}] - список товаров\n" +
+            return $"[{string.Join("; ", Cargos.Select(c => c))}] - список товаров\n" +
                 $"{DelTransport.Name} - транспорт";
         }
     }
