@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace LR4.Models
 {
-    internal class Cargo
+    internal class Cargo(string name, double mass, double cost)
     {
-        public string Name { get; set; }
-        public double Mass { get; set; }
-        public double CostPerKg { get; set; }
+        public string Name { get; set; } = name;
+        public double Mass { get; set; } = mass;
+        public double CostPerKg { get; set; } = cost;
 
         public double Cost()
         {

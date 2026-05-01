@@ -13,7 +13,8 @@ namespace LR4.Models
         public required DeliveryRequest Request { get; set; }
         public override string ToString()
         {
-            return $"{TotalTime} - время доставки\n" +
+            return "Заказ\n" +
+                $"{TotalTime} - время доставки\n" +
                 $"{TotalCost} - стоимость доставки\n" +
                 $"{Request}";
         }

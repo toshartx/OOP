@@ -12,7 +12,7 @@ namespace LR4
         public DeliveryResult CalculateDelivery(DeliveryRequest request)
         {
             double cargoCost, overheadCost;
-            overheadCost = request.DelTransport.OverheadCost(request.Distance);
+            overheadCost = request.DelTransport!.OverheadCost(request.Distance);
             cargoCost = request.Cargos.Sum(c => c.Cost());
 
             return new DeliveryResult

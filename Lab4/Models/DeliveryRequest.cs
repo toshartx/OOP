@@ -8,8 +8,8 @@ namespace LR4.Models
 {
     class DeliveryRequest
     {
-        public List<Cargo> Cargos { get; set; }
-        public Transport DelTransport { get; set; }
+        public List<Cargo> Cargos { get; set; } = [];
+        public Transport? DelTransport { get; set; }
         public double Distance { get; set; }
 
         public override string ToString()

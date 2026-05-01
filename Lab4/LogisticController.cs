@@ -12,13 +12,13 @@ namespace LR4
     {
         private readonly LogisticCalculator _calculator;
         private readonly TransportFactory _transportFactory;
-        private readonly CargoBuilder _cargoBuilder;
+        private readonly DeliveryRequestBuilder _deliveryRequestBuilder;
 
         public LogisticsController()
         {
             _calculator = new LogisticCalculator();
             _transportFactory = new TransportFactory();
-            _cargoBuilder = new CargoBuilder();
+            _deliveryRequestBuilder = new DeliveryRequestBuilder();
         }
 
         public DeliveryResult ProcessDelivery(
@@ -38,24 +38,17 @@ namespace LR4
             string transportType,
             double distance)
         {
-            var cargos = new List<Cargo>();
-
             foreach (var item in cargoItems)
             {
-                var cargo = _cargoBuilder
-                    .WithName(item.name)
-                    .WithMass(item.mass)
-                    .WithCost(item.cost)
-                    .Build();
-                cargos.Add(cargo);
+                var cargo = new Cargo(item.name, item.mass, item.cost);
+                _deliveryRequestBuilder.WithCargo(cargo);
             }
 
-            return new DeliveryRequest
-            {
-                Cargos = cargos,
-                DelTransport = _transportFactory.CreateTransport(transportType),
-                Distance = distance
-            };
+            var transport = _transportFactory.CreateTransport(transportType);
+            _deliveryRequestBuilder.OnTransport(transport);
+            _deliveryRequestBuilder.WithDistance(distance);
+
+            return _deliveryRequestBuilder.Build();
         }
     }
 }

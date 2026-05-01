@@ -19,29 +19,29 @@ namespace LR4.Creation
     //    public IDefaultCargoBuilder WithName(string name);
     //}
 
-    class CargoBuilder // : IDefaultCargoBuilder
-    {
-        public Cargo Cargo { get; private set; } = new Cargo();
-        public CargoBuilder WithMass(double mass)
-        {
-            Cargo.Mass = mass;
-            return this;
-        }
-        public CargoBuilder WithCost(double cost)
-        {
-            Cargo.CostPerKg = cost;
-            return this;
-        }
-        public CargoBuilder WithName(string name)
-        {
-            Cargo.Name = name;
-            return this;
-        }
-        public Cargo Build()
-        {
-            var cargo = Cargo;
-            Cargo = new Cargo();
-            return cargo;
-        }
-    }
+    //class CargoBuilder // : IDefaultCargoBuilder
+    //{
+    //    public Cargo Cargo { get; private set; } = new Cargo();
+    //    public CargoBuilder WithMass(double mass)
+    //    {
+    //        Cargo.Mass = mass;
+    //        return this;
+    //    }
+    //    public CargoBuilder WithCost(double cost)
+    //    {
+    //        Cargo.CostPerKg = cost;
+    //        return this;
+    //    }
+    //    public CargoBuilder WithName(string name)
+    //    {
+    //        Cargo.Name = name;
+    //        return this;
+    //    }
+    //    public Cargo Build()
+    //    {
+    //        var cargo = Cargo;
+    //        Cargo = new Cargo();
+    //        return cargo;
+    //    }
+    //}
 }

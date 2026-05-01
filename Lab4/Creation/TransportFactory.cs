@@ -8,12 +8,12 @@ using LR4.Models;
 
 namespace LR4.Creation
 {
-    interface ITransportFactory
-    {
-        public Transport CreateTransport(string name);
-    }
+    //interface ITransportFactory
+    //{
+    //    public Transport CreateTransport(string name);
+    //}
 
-    class TransportFactory : ITransportFactory
+    class TransportFactory //: ITransportFactory
     {
         public Transport CreateTransport(string name)
         {
