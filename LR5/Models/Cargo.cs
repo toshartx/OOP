@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace LR5.Models
 {
-    class Cargo(string name, double mass, double cost)
+    class Cargo
     {
-        public string Name { get; set; } = name;
-        public double Mass { get; set; } = mass;
-        public double CostPerKg { get; set; } = cost;
+        public string Name { get; set; }
+        public double Mass { get; set; }
+        public double CostPerKg { get; set; }
 
         public double Cost()
         {

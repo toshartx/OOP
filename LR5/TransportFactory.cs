@@ -11,7 +11,7 @@ namespace LR5
 {
     interface ITransportFactory
     {
-        public Transport Create();
+        Transport Create();
     }
 
     class TruckTransportFactory : ITransportFactory
@@ -42,7 +42,7 @@ namespace LR5
     {
         public Transport Create()
         {
-            return new Plane();
+            return new Models.Plane();
         }
     }
 
