@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LR5.Models
 {
-    class DeliveryRequest
+    public class DeliveryRequest
     {
         public List<Cargo> Cargos { get; set; } = [];
         public Transport? DelTransport { get; set; }

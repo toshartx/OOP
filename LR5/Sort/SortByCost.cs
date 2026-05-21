@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Sort
 {
-    class SortByCost : SortHandler
+    public class SortByCost : SortHandler
     {
         private bool _desc;
         public SortByCost(bool descending = false) => _desc = descending;

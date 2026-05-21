@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Services
 {
-    class TransportSelector
+    public class TransportSelector
     {
         private readonly TransportFactoryRegistry _factoryRegistry;
 

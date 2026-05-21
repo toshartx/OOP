@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Sort
 {
-    class SortByTransportName : SortHandler
+    public class SortByTransportName : SortHandler
     {
         public override List<DeliveryResult> Sort(List<DeliveryResult> results)
         {

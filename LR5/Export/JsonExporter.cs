@@ -8,7 +8,7 @@ using LR5.Models;
 
 namespace LR5.Export
 {
-    internal class JsonExporter : IExporter
+    public class JsonExporter : IExporter
     {
         public void Export(List<DeliveryResult> results, string filePath)
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LR5.Models
 {
-    abstract class Transport
+    public abstract class Transport
     {
         public string Name { get; set; }
         public double ConsumptionPerKm { get; set; }
@@ -22,7 +22,7 @@ namespace LR5.Models
         }
     }
 
-    abstract class GroundTransport : Transport
+    public abstract class GroundTransport : Transport
     {
         protected GroundTransport()
         {
@@ -30,7 +30,7 @@ namespace LR5.Models
         }
     }
 
-    class Truck : GroundTransport
+    public class Truck : GroundTransport
     {
         public Truck() : base()
         {
@@ -40,7 +40,7 @@ namespace LR5.Models
         }
     }
 
-    class Train : GroundTransport
+    public class Train : GroundTransport
     {
         public Train() : base()
         {
@@ -49,7 +49,7 @@ namespace LR5.Models
             Velocity = 60;
         }
     }
-    abstract class AirTransport : Transport
+    public abstract class AirTransport : Transport
     {
         protected AirTransport()
         {
@@ -57,7 +57,7 @@ namespace LR5.Models
         }
     }
 
-    class Plane : AirTransport
+    public class Plane : AirTransport
     {
         public Plane() : base()
         {
@@ -67,7 +67,7 @@ namespace LR5.Models
         }
     }
 
-    class Helicopter : AirTransport
+    public class Helicopter : AirTransport
     {
         public Helicopter() : base()
         {
@@ -77,7 +77,7 @@ namespace LR5.Models
         }
     }
 
-    abstract class WaterTransport : Transport
+    public abstract class WaterTransport : Transport
     {
         protected WaterTransport()
         {
@@ -85,7 +85,7 @@ namespace LR5.Models
         }
     }
 
-    class Tanker : WaterTransport
+    public class Tanker : WaterTransport
     {
         public Tanker() : base()
         {

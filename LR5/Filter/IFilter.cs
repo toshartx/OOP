@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Filter
 {
-    interface IFilter
+    public interface IFilter
     {
         bool Apply(DeliveryResult result);
     }

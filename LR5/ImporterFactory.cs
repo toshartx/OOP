@@ -8,7 +8,7 @@ using LR5.Models;
 
 namespace LR5
 {
-    internal class ImporterFactory
+    public class ImporterFactory
     {
         private readonly List<BaseImporter> _importers;
 

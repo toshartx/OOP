@@ -7,14 +7,14 @@ using LR5.Models;
 
 namespace LR5
 {
-    interface IRequestBuilder
+    public interface IRequestBuilder
     {
         IRequestBuilder WithCargo(Cargo cargo);
         IRequestBuilder OnTransport(Transport transport);
         IRequestBuilder WithDistance(double distance);
         DeliveryRequest Build();
     }
-    class DeliveryRequestBuilder : IRequestBuilder
+    public class DeliveryRequestBuilder : IRequestBuilder
     {
         public DeliveryRequest Request { get; private set; } = new DeliveryRequest();
 

@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Import
 {
-    abstract class BaseImporter
+    public abstract class BaseImporter
     {
         protected readonly TransportFactoryRegistry _factoryRegistry;
 

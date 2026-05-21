@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Export
 {
-    internal class CsvExporter : IExporter
+    public class CsvExporter : IExporter
     {
         public void Export(List<DeliveryResult> results, string filePath)
         {

@@ -7,12 +7,12 @@ using LR5.Models;
 
 namespace LR5.Export
 {
-    abstract class ExporterDecorator : IExporter
+    public abstract class ExporterDecorator : IExporter
     {
-        protected readonly IExporter _exporter;
+        protected readonly IExporter _inner;
         protected ExporterDecorator(IExporter inner)
         {
-            _exporter = inner;
+            _inner = inner;
         }
         public abstract void Export(List<DeliveryResult> results, string filePath);
         

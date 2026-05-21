@@ -9,12 +9,12 @@ using LR5.Models;
 
 namespace LR5
 {
-    interface ITransportFactory
+    public interface ITransportFactory
     {
         Transport Create();
     }
 
-    class TruckTransportFactory : ITransportFactory
+    public class TruckTransportFactory : ITransportFactory
     {
         public Transport Create()
         {
@@ -22,7 +22,7 @@ namespace LR5
         }
     }
 
-    class TankerTransportFactory : ITransportFactory
+    public class TankerTransportFactory : ITransportFactory
     {
         public Transport Create()
         {
@@ -30,7 +30,7 @@ namespace LR5
         }
     }
 
-    class TrainTransportFactory : ITransportFactory
+    public class TrainTransportFactory : ITransportFactory
     {
         public Transport Create()
         {
@@ -38,7 +38,7 @@ namespace LR5
         }
     }
 
-    class PlaneTransportFactory : ITransportFactory
+    public class PlaneTransportFactory : ITransportFactory
     {
         public Transport Create()
         {
@@ -46,7 +46,7 @@ namespace LR5
         }
     }
 
-    class HelicopterTransportFactory : ITransportFactory
+    public class HelicopterTransportFactory : ITransportFactory
     {
         public Transport Create()
         {

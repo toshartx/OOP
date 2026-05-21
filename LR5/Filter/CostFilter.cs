@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Filter
 {
-    class CostFilter : IFilter
+    public class CostFilter : IFilter
     {
         private readonly double _min, _max;
         public CostFilter(double min, double max) => (_min, _max) = (min, max);

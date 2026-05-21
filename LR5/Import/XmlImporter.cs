@@ -8,11 +8,11 @@ using System.Xml.Serialization;
 
 namespace LR5.Import
 {
-    class XmlImporter : BaseImporter
+    public class XmlImporter : BaseImporter
     {
         public XmlImporter(TransportFactoryRegistry factoryRegistry) : base(factoryRegistry) { }
 
-        public override bool CanHandle(string extension) => extension == ".xml";
+        public override bool CanHandle(string path) => Path.GetExtension(path).ToLower() == ".xml";
 
         public override DeliveryRequest Read(string filePath)
         {

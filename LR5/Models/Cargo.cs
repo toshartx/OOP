@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace LR5.Models
 {
-    class Cargo
+    public class Cargo
     {
         public string Name { get; set; }
         public double Mass { get; set; }
         public double CostPerKg { get; set; }
 
+        public Cargo() { }
         public double Cost()
         {
             return CostPerKg * Mass;

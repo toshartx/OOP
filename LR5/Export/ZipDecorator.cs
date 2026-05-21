@@ -9,15 +9,22 @@ using LR5.Models;
 
 namespace LR5.Export
 {
-    internal class ZipDecorator : ExporterDecorator
+    public class ZipDecorator : ExporterDecorator
     {
         public ZipDecorator(IExporter inner) : base(inner) { }
 
         public override void Export(List<DeliveryResult> results, string filePath)
         {
             var tempFile = Path.GetTempFileName();
-            _exporter.Export(results, tempFile);
+            _inner.Export(results, tempFile);
+
             var zipPath = Path.ChangeExtension(filePath, ".zip");
+
+            if (File.Exists(zipPath))
+            {
+                File.Delete(zipPath);
+            }
+
             using var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create);
             archive.CreateEntryFromFile(tempFile, Path.GetFileName(filePath));
             File.Delete(tempFile);

@@ -7,16 +7,19 @@ using LR5.Models;
 
 namespace LR5.Import
 {
-    class CsvImporter : BaseImporter
+    public class CsvImporter : BaseImporter
     {
         public CsvImporter(TransportFactoryRegistry factoryRegistry) : base(factoryRegistry) { }
 
-        public override bool CanHandle(string extension) => extension == ".csv";
+        public override bool CanHandle(string path) => Path.GetExtension(path).ToLower() == ".csv";
 
         public override DeliveryRequest Read(string filePath)
         {
             var lines = File.ReadAllLines(filePath);
             var dto = new ImportData { Cargos = [] };
+
+            var header = lines[0].Split(',');
+            bool hasDistance = header.Contains("Distance");
 
             for (int i = 1; i < lines.Length; i++)
             {
@@ -29,6 +32,11 @@ namespace LR5.Import
                         Mass = double.Parse(parts[1]),
                         CostPerKg = double.Parse(parts[2])
                     });
+
+                    if (i == 1 && hasDistance && parts.Length > 3)
+                    {
+                        dto.Distance = double.Parse(parts[3]);
+                    }
                 }
             }
 

@@ -8,7 +8,7 @@ using LR5.Models;
 
 namespace LR5.Export
 {
-    internal class EncryptionDecorator : ExporterDecorator
+    public class EncryptionDecorator : ExporterDecorator
     {
         private readonly string _password;
         public EncryptionDecorator(IExporter inner, string password) : base(inner) => _password = password;
@@ -16,7 +16,7 @@ namespace LR5.Export
         public override void Export(List<DeliveryResult> results, string filePath)
         {
             var tempFile = Path.GetTempFileName();
-            _exporter.Export(results, tempFile);
+            _inner.Export(results, tempFile);
             var data = File.ReadAllBytes(tempFile);
             // Шифрование (упрощенно)
             File.WriteAllBytes(filePath, data);

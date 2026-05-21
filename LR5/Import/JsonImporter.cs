@@ -8,7 +8,7 @@ using LR5.Models;
 
 namespace LR5.Import
 {
-    class JsonImporter : BaseImporter
+    public class JsonImporter : BaseImporter
     {
         public JsonImporter(TransportFactoryRegistry factoryRegistry) : base(factoryRegistry) {}
 
@@ -21,6 +21,10 @@ namespace LR5.Import
         {
             string json = File.ReadAllText(path);
             var data = JsonSerializer.Deserialize<ImportData>(json);
+
+            Console.WriteLine($"Cargos count: {data?.Cargos?.Count ?? 0}"); // отладка
+            Console.WriteLine($"TransportType: {data?.TransportType}"); // отладка
+            Console.WriteLine($"Distance: {data?.Distance}"); // отладка
 
             return CreateRequest(data!);
         }

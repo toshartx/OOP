@@ -8,7 +8,7 @@ using LR5.Services;
 
 namespace LR5
 {
-    class DeliveryController
+    public class DeliveryController
     {
         private readonly ImporterFactory _importerFactory;
         private readonly ILogisticCalculator _calculator;

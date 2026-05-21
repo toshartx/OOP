@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5
 {
-    class TransportFactoryRegistry
+    public class TransportFactoryRegistry
     {
         private readonly Dictionary<string, ITransportFactory> _factories;
 

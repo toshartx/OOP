@@ -7,12 +7,12 @@ using LR5.Models;
 
 namespace LR5.Services
 {
-    interface ILogisticCalculator
+    public interface ILogisticCalculator
     {
         DeliveryResult CalculateDelivery(DeliveryRequest request);
     }
 
-    class LogisticCalculator : ILogisticCalculator
+    public class LogisticCalculator : ILogisticCalculator
     {
         public DeliveryResult CalculateDelivery(DeliveryRequest request)
         {
@@ -23,7 +23,7 @@ namespace LR5.Services
             return new DeliveryResult
             {
                 TotalCost = cargoCost + overheadCost,
-                TotalTime = request.DelTransport.DeliveryTime(request.Distance),
+                TotalTime = Math.Round(request.DelTransport.DeliveryTime(request.Distance), 2),
                 Request = request
             };
 

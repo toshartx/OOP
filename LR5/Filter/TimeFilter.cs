@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Filter
 {
-    class TimeFilter : IFilter
+    public class TimeFilter : IFilter
     {
         private readonly double _maxTime;
         public TimeFilter(double maxTime) => _maxTime = maxTime;

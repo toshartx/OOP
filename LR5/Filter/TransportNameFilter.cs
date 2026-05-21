@@ -7,7 +7,7 @@ using LR5.Models;
 
 namespace LR5.Filter
 {
-    class TransportNameFilter : IFilter
+    public class TransportNameFilter : IFilter
     {
         private readonly string _name;
         public TransportNameFilter(string name) => _name = name;
