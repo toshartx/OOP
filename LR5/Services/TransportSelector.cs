@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LR5.Models;
 
-namespace LR5
+namespace LR5.Services
 {
     class TransportSelector
     {
