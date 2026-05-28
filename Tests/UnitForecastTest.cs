@@ -1,6 +1,7 @@
 ﻿using Forecast.Clients;
 using Forecast.Controllers;
 using Forecast.Models.Weather;
+using Forecast.Services;
 using Moq;
 
 namespace Tests
@@ -11,9 +12,10 @@ namespace Tests
         public async Task DefaultTest()
         {
             // Подготовка
-            var mockClient = new Mock<IWeatherDataClient>();
-            mockClient.Setup(client => client.LocationCurrentTemperature(It.IsAny<decimal>(), It.IsAny<decimal>())).ReturnsAsync(22.5m);
-            var controller = new CurrentWeatherController(mockClient.Object);
+            var mockFactory = new Mock<IWeatherProviderFactory>();
+            
+            mockFactory.Setup(fact => fact.GetProvider("openweather").LocationCurrentTemperature(It.IsAny<decimal>(), It.IsAny<decimal>())).ReturnsAsync(22.5m);
+            var controller = new CurrentWeatherController(mockFactory.Object);
 
             // Действие
             var result = await controller.GetCurrentWeather(22.5m, -11.2m);
