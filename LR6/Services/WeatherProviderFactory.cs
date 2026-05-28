@@ -27,7 +27,7 @@ public class WeatherProviderFactory
                 client = _googleWeather;
                 break;
             default:
-                throw new ArgumentException("unknown_provider");
+                throw new ArgumentException($"Unknown Provider: {providerName}");
         }
         return client;   
     }
