@@ -2,6 +2,7 @@ using DotEnv.Core;
 using Forecast.Api;
 using Forecast.Clients;
 using Forecast.Controllers;
+using Forecast.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +18,21 @@ builder.Services.AddOpenApiDocument(config =>
     config.Title = "Weather Example API";
     config.Version = "v1";
 });
+
+// Регистрация HTTP клиентов для провайдеров погоды
 builder.Services.AddHttpClient<OpenWeatherDataClient>();
-builder.Services.AddSingleton<IWeatherDataClient, OpenWeatherDataClient>();
+builder.Services.AddHttpClient<GoogleWeatherDataClient>();
+
+// Регистрация клиентов как IWeatherDataClient
+builder.Services.AddSingleton<IWeatherDataClient, OpenWeatherDataClient>(
+    sp => sp.GetRequiredService<OpenWeatherDataClient>());
+builder.Services.AddSingleton<IWeatherDataClient, GoogleWeatherDataClient>(
+    sp => sp.GetRequiredService<GoogleWeatherDataClient>());
+
+// Регистрация фабрики
+builder.Services.AddSingleton<IWeatherProviderFactory, WeatherProviderFactory>();
+
+// Регистрация контроллера
 builder.Services.AddSingleton<CurrentWeatherController>();
 
 var app = builder.Build();

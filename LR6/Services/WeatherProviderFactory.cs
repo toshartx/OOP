@@ -2,7 +2,7 @@
 
 namespace Forecast.Services;
 
-public class WeatherProviderFactory
+public class WeatherProviderFactory : IWeatherProviderFactory
 {
     private readonly IWeatherDataClient _openWeather;
     private readonly IWeatherDataClient _googleWeather;

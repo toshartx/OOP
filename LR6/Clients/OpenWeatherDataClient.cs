@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 using Forecast.Utils;
 
@@ -19,8 +20,11 @@ public class OpenWeatherDataClient : IWeatherDataClient
     {
         try
         {
+            var latStr = latitude.ToString(CultureInfo.InvariantCulture);
+            var lonStr = longitude.ToString(CultureInfo.InvariantCulture);
+
             var response = await client.GetAsync(
-                $"?lat={latitude}&lon={longitude}&appid={apiKey}&units=metric"
+                $"?lat={latStr}&lon={lonStr}&appid={apiKey}&units=metric"
             );
 
             if (!response.IsSuccessStatusCode)

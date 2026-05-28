@@ -1,15 +1,25 @@
 using Forecast.Clients;
 using Forecast.Models.Weather;
+using Forecast.Services;
 
 namespace Forecast.Controllers;
 
-public class CurrentWeatherController(IWeatherDataClient client)
+public class CurrentWeatherController
 {
-    private readonly IWeatherDataClient client = client;
+    private readonly IWeatherProviderFactory _factory;
 
-    public async Task<CurrentWeather> GetCurrentWeather(decimal latitude, decimal longitude)
+    public CurrentWeatherController(IWeatherProviderFactory factory)
     {
+        _factory = factory;
+    }
+
+    public async Task<CurrentWeather> GetCurrentWeather(
+        decimal latitude,
+        decimal longitude,
+        string provider = "openweather")
+    {
+        var client = _factory.GetProvider(provider);
         var temperature = await client.LocationCurrentTemperature(latitude, longitude);
-        return new(temperature);
+        return new CurrentWeather(temperature);
     }
 }

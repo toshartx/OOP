@@ -17,17 +17,21 @@ public static class WeatherApi
             .WithName("GetCurrentWeather")
             .WithDisplayName("Get Current Weather")
             .WithTags(["weather"])
-            .WithDescription("Returns current weather for given coordinates");
+            .WithDescription(
+                "Returns current weather for given coordinates. " +
+                "Available providers: openweather, googleweather");
 
         return groups;
     }
 
     private static async Task<
-        Results<Ok<Success<CurrentWeather>>, BadRequest<Status>, InternalServerError<Status>>
+        Results<Ok<Success<CurrentWeather>>, BadRequest<Status>,
+               InternalServerError<Status>>
     > HandleGetCurrentWeather(
         [FromServices] CurrentWeatherController controller,
         [DefaultValue("18.300231990440125")] string lat,
-        [DefaultValue("-64.8251590359234")] string lon
+        [DefaultValue("-64.8251590359234")] string lon,
+        [DefaultValue("openweather")] string provider
     )
     {
         try
@@ -35,7 +39,8 @@ public static class WeatherApi
             var latitude = decimal.Parse(lat);
             var longitude = decimal.Parse(lon);
 
-            var weather = await controller.GetCurrentWeather(latitude, longitude);
+            var weather = await controller.GetCurrentWeather(
+                latitude, longitude, provider);
 
             return TypedResults.Ok(Success.Create(200, "success", weather));
         }
@@ -46,6 +51,10 @@ public static class WeatherApi
         catch (OverflowException)
         {
             return TypedResults.BadRequest(Status.Create(400, "invalid coordinates"));
+        }
+        catch (ArgumentException e)
+        {
+            return TypedResults.BadRequest(Status.Create(400, e.Message));
         }
         catch (ApiCallException e)
         {
