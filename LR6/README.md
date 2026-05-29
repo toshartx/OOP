@@ -17,8 +17,10 @@ That, however, requires having [NSwag CLI](https://github.com/RicoSuter/NSwag/wi
 ## Environment variables
 Pass API key and OpenWeather base url via environment variables:
 ```
-OPENWEATHER_API_KEY=xxxxxxxxxxxxxxxxx
-OPENWEATHER_BASE_URL=https://api.openweathermap.org/data/2.5/weather
+OPENWEATHER_BASE_URL=https://api.openweathermap.org/data/2.5
+OPENWEATHER_API_KEY=1fedeefce5fc92e841e033b617e8e590
+GOOGLE_WEATHER_BASE_URL=https://weather.googleapis.com/v1
+GOOGLE_WEATHER_API_KEY=AIzaSyBy2dpXOFBXAxw0BBDqHYoIrsxUDDjixc0
 ```
 
 For convenience, the program will also read these keys from a `.env`

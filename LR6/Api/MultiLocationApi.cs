@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using Forecast.Controllers;
 using Forecast.Models.Weather;
-using Forecast.Services;
 using Forecast.Shared.Responses;
 using Forecast.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -31,20 +30,20 @@ public static class MultiLocationApi
                InternalServerError<Status>>
     > HandleGetMultiLocation(
         [FromServices] MultiLocationController controller,
-        [FromServices] CityCoordinatesService cityService,
-        [FromQuery] List<string> locations,
+        [FromQuery] string[] locations,
         [DefaultValue("openweather")] string provider
     )
     {
         try
         {
-            if (locations == null || locations.Count == 0)
+            if (locations == null || locations.Length == 0)
             {
                 return TypedResults.BadRequest(
                     Status.Create(400, "at least one location required"));
             }
 
-            var results = await controller.GetMultiLocationTemperature(locations, provider);
+            var results = await controller.GetMultiLocationTemperature(
+                locations.ToList(), provider);
             return TypedResults.Ok(Success.Create(200, "success", results));
         }
         catch (FormatException)

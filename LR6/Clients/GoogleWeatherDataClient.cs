@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using System.Text.Json.Serialization;
+using System.Text.Json;
 using Forecast.Models.Weather;
 using Forecast.Utils;
 
@@ -9,25 +9,27 @@ public class GoogleWeatherDataClient : IWeatherDataClient
 {
     private readonly HttpClient _client;
     private readonly string _apiKey;
+    private readonly string _baseUrl;
+    private static readonly Random Random = new();
 
     public GoogleWeatherDataClient(IConfiguration config, HttpClient httpClient)
     {
         _client = httpClient;
-        _client.BaseAddress = new Uri(
-            config.GetValue<string>("GOOGLE_WEATHER_BASE_URL") ?? "");
+        _baseUrl = config.GetValue<string>("GOOGLE_WEATHER_BASE_URL") ?? "";
         _apiKey = config.GetValue<string>("GOOGLE_WEATHER_API_KEY") ?? "";
     }
 
-    public async Task<decimal> LocationCurrentTemperature(
-        decimal latitude, decimal longitude)
+    public async Task<decimal> LocationCurrentTemperature(decimal latitude, decimal longitude)
     {
         try
         {
             var latStr = latitude.ToString(CultureInfo.InvariantCulture);
             var lonStr = longitude.ToString(CultureInfo.InvariantCulture);
 
-            var response = await _client.GetAsync(
-                $"?lat={latStr}&lon={lonStr}&key={_apiKey}");
+            var url = $"{_baseUrl}currentConditions:lookup?key={_apiKey}&location.latitude={latStr}&location.longitude={lonStr}";
+
+            var response = await _client.GetAsync(url);
+            var responseBody = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
             {
@@ -35,29 +37,28 @@ public class GoogleWeatherDataClient : IWeatherDataClient
                     $"google weather returned bad status: {(ushort)response.StatusCode}");
             }
 
-            var data = await response.Content
-                .ReadFromJsonAsync<GoogleWeatherCurrentResponse>();
-
-            return data?.Current?.Temp
-                ?? throw new ApiCallException("failed to decode response");
+            using var json = JsonDocument.Parse(responseBody);
+            var temp = json.RootElement.GetProperty("temperature").GetProperty("degrees").GetDecimal();
+            return temp;
         }
         catch (HttpRequestException e)
         {
-            throw new ApiCallException(
-                $"failed to call google weather: {e.Message}", e);
+            throw new ApiCallException($"failed to call google weather: {e.Message}", e);
         }
     }
 
-    public async Task<List<ForecastDay>> LocationForecast(
-        decimal latitude, decimal longitude, int days)
+    public async Task<List<ForecastDay>> LocationForecast(decimal latitude, decimal longitude, int days)
     {
         try
         {
             var latStr = latitude.ToString(CultureInfo.InvariantCulture);
             var lonStr = longitude.ToString(CultureInfo.InvariantCulture);
 
-            var response = await _client.GetAsync(
-                $"/forecast?lat={latStr}&lon={lonStr}&key={_apiKey}&days={days}");
+            // Правильный URL для прогноза
+            var url = $"{_baseUrl}forecast/days:lookup?key={_apiKey}&location.latitude={latStr}&location.longitude={lonStr}&days={days}";
+
+            var response = await _client.GetAsync(url);
+            var responseBody = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
             {
@@ -65,70 +66,36 @@ public class GoogleWeatherDataClient : IWeatherDataClient
                     $"google weather forecast returned bad status: {(ushort)response.StatusCode}");
             }
 
-            var data = await response.Content
-                .ReadFromJsonAsync<GoogleWeatherForecastResponse>();
+            using var json = JsonDocument.Parse(responseBody);
+            var daysArray = json.RootElement.GetProperty("forecastDays");
 
-            if (data?.Daily == null || data.Daily.Count == 0)
-                throw new ApiCallException("failed to decode forecast response");
+            var forecast = new List<ForecastDay>();
+            foreach (var day in daysArray.EnumerateArray())
+            {
+                var displayDate = day.GetProperty("displayDate");
+                var year = displayDate.GetProperty("year").GetInt32();
+                var month = displayDate.GetProperty("month").GetInt32();
+                var dayOfMonth = displayDate.GetProperty("day").GetInt32();
+                var date = new DateTime(year, month, dayOfMonth);
 
-            var forecastDays = data.Daily
-                .Select(day => new ForecastDay(
-                    DateTime.Parse(day.Date),
-                    day.Temp.Day,
-                    day.Weather.First().Description
-                ))
-                .Take(days)
-                .ToList();
+                var maxTemp = day.GetProperty("maxTemperature").GetProperty("degrees").GetDecimal();
+                var minTemp = day.GetProperty("minTemperature").GetProperty("degrees").GetDecimal();
+                var avgTemp = (maxTemp + minTemp) / 2.0m;
 
-            return forecastDays;
+                var condition = day.GetProperty("daytimeForecast")
+                    .GetProperty("weatherCondition")
+                    .GetProperty("description")
+                    .GetProperty("text")
+                    .GetString()!;
+
+                forecast.Add(new ForecastDay(date, Math.Round(avgTemp, 1), condition));
+            }
+
+            return forecast.Take(days).ToList();
         }
         catch (HttpRequestException e)
         {
-            throw new ApiCallException(
-                $"failed to call google weather forecast: {e.Message}", e);
+            throw new ApiCallException($"failed to call google weather forecast: {e.Message}", e);
         }
     }
-}
-
-// Модели для Google Weather API
-class GoogleWeatherCurrentResponse
-{
-    [JsonPropertyName("current")]
-    public required CurrentData Current { get; set; }
-
-    public class CurrentData
-    {
-        [JsonPropertyName("temp")]
-        public decimal Temp { get; set; }
-    }
-}
-
-class GoogleWeatherForecastResponse
-{
-    [JsonPropertyName("daily")]
-    public required List<DailyData> Daily { get; set; }
-}
-
-class DailyData
-{
-    [JsonPropertyName("dt")]
-    public required string Date { get; set; }
-
-    [JsonPropertyName("temp")]
-    public required TempData Temp { get; set; }
-
-    [JsonPropertyName("weather")]
-    public required List<WeatherInfo> Weather { get; set; }
-}
-
-class TempData
-{
-    [JsonPropertyName("day")]
-    public decimal Day { get; set; }
-}
-
-class WeatherInfo
-{
-    [JsonPropertyName("description")]
-    public required string Description { get; set; }
 }

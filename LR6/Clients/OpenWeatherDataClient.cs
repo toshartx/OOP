@@ -13,8 +13,13 @@ public class OpenWeatherDataClient : IWeatherDataClient
     public OpenWeatherDataClient(IConfiguration config, HttpClient httpClient)
     {
         client = httpClient;
-        client.BaseAddress = new Uri(config.GetValue<string>("OPENWEATHER_BASE_URL") ?? "");
+        var baseUrl = config.GetValue<string>("OPENWEATHER_BASE_URL");
         apiKey = config.GetValue<string>("OPENWEATHER_API_KEY") ?? "";
+        
+        if (!string.IsNullOrEmpty(baseUrl))
+        {
+            client.BaseAddress = new Uri(baseUrl);
+        }
     }
 
     public async Task<decimal> LocationCurrentTemperature(decimal latitude, decimal longitude)
@@ -25,7 +30,7 @@ public class OpenWeatherDataClient : IWeatherDataClient
             var lonStr = longitude.ToString(CultureInfo.InvariantCulture);
 
             var response = await client.GetAsync(
-                $"/weather?lat={latStr}&lon={lonStr}&appid={apiKey}&units=metric"
+                $"weather?lat={latStr}&lon={lonStr}&appid={apiKey}&units=metric"
             );
 
             if (!response.IsSuccessStatusCode)
@@ -53,7 +58,7 @@ public class OpenWeatherDataClient : IWeatherDataClient
             var lonStr = longitude.ToString(CultureInfo.InvariantCulture);
 
             var response = await client.GetAsync(
-                $"/forecast?lat={latStr}&lon={lonStr}&appid={apiKey}&units=metric&cnt={days * 8}"
+                $"forecast?lat={latStr}&lon={lonStr}&appid={apiKey}&units=metric&cnt={days * 8}"
             );
 
             if (!response.IsSuccessStatusCode)

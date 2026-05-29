@@ -6,11 +6,9 @@ using Forecast.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Loading configuration as environment variables from the .env file.
 new EnvLoader().Load();
 builder.Configuration.AddEnvironmentVariables();
 
-// Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
 {
@@ -19,28 +17,30 @@ builder.Services.AddOpenApiDocument(config =>
     config.Version = "v1";
 });
 
-// Регистрация HTTP клиентов для провайдеров погоды
+// Регистрируем HttpClient для OpenWeatherDataClient
 builder.Services.AddHttpClient<OpenWeatherDataClient>();
+
+// Регистрируем GoogleWeatherDataClient (тоже через HttpClient)
 builder.Services.AddHttpClient<GoogleWeatherDataClient>();
-// Регистрация сервиса городов
+
+// Регистрируем сервисы
 builder.Services.AddSingleton<CityCoordinatesService>();
-// Регистрация клиентов как IWeatherDataClient
-builder.Services.AddSingleton<IWeatherDataClient, OpenWeatherDataClient>(
-    sp => sp.GetRequiredService<OpenWeatherDataClient>());
-builder.Services.AddSingleton<IWeatherDataClient, GoogleWeatherDataClient>(
-    sp => sp.GetRequiredService<GoogleWeatherDataClient>());
 
-// Регистрация фабрики
-builder.Services.AddSingleton<IWeatherProviderFactory, WeatherProviderFactory>();
+// Регистрируем фабрику провайдеров
+builder.Services.AddSingleton<IWeatherProviderFactory>(sp =>
+{
+    var openWeather = sp.GetRequiredService<OpenWeatherDataClient>();
+    var googleWeather = sp.GetRequiredService<GoogleWeatherDataClient>();
+    return new WeatherProviderFactory(openWeather, googleWeather);
+});
 
-// Регистрация контроллера
+// Регистрируем контроллеры
 builder.Services.AddSingleton<CurrentWeatherController>();
 builder.Services.AddSingleton<ForecastController>();
 builder.Services.AddSingleton<MultiLocationController>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseOpenApi();

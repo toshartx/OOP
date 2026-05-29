@@ -17,18 +17,11 @@ public class WeatherProviderFactory : IWeatherProviderFactory
 
     public IWeatherDataClient GetProvider(string providerName)
     {
-        IWeatherDataClient client;
-        switch (providerName) 
+        return providerName.ToLower() switch
         {
-            case "openweather":
-                client = _openWeather;
-                break;
-            case "googleweather":
-                client = _googleWeather;
-                break;
-            default:
-                throw new ArgumentException($"Unknown Provider: {providerName}");
-        }
-        return client;   
+            "openweather" => _openWeather,
+            "googleweather" => _googleWeather,
+            _ => throw new ArgumentException($"Unknown provider: {providerName}")
+        };
     }
 }
