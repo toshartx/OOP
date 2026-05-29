@@ -22,7 +22,8 @@ builder.Services.AddOpenApiDocument(config =>
 // Регистрация HTTP клиентов для провайдеров погоды
 builder.Services.AddHttpClient<OpenWeatherDataClient>();
 builder.Services.AddHttpClient<GoogleWeatherDataClient>();
-
+// Регистрация сервиса городов
+builder.Services.AddSingleton<CityCoordinatesService>();
 // Регистрация клиентов как IWeatherDataClient
 builder.Services.AddSingleton<IWeatherDataClient, OpenWeatherDataClient>(
     sp => sp.GetRequiredService<OpenWeatherDataClient>());

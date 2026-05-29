@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Forecast.Controllers;
 using Forecast.Models.Weather;
+using Forecast.Services;
 using Forecast.Shared.Responses;
 using Forecast.Utils;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -13,13 +14,14 @@ public static class WeatherApi
     public static RouteGroupBuilder MapCurrentWeatherApi(this RouteGroupBuilder groups)
     {
         groups
-            .MapGet("weather", WeatherApi.HandleGetCurrentWeather)
+            .MapGet("weather", HandleGetCurrentWeather)
             .WithName("GetCurrentWeather")
             .WithDisplayName("Get Current Weather")
             .WithTags(["weather"])
             .WithDescription(
-                "Returns current weather for given coordinates. " +
-                "Available providers: openweather, googleweather");
+                "Returns current weather for given coordinates or city name. " +
+                "Available providers: openweather, googleweather. " +
+                "Available cities: Минск, Лондон, Токио, Шанхай, Варшава");
 
         return groups;
     }
@@ -29,15 +31,33 @@ public static class WeatherApi
                InternalServerError<Status>>
     > HandleGetCurrentWeather(
         [FromServices] CurrentWeatherController controller,
-        [DefaultValue("18.300231990440125")] string lat,
-        [DefaultValue("-64.8251590359234")] string lon,
-        [DefaultValue("openweather")] string provider
+        [FromServices] CityCoordinatesService cityService,
+        [DefaultValue("18.300231990440125")] string? lat,
+        [DefaultValue("-64.8251590359234")] string? lon,
+        [DefaultValue("openweather")] string provider,
+        string? city
     )
     {
         try
         {
-            var latitude = decimal.Parse(lat);
-            var longitude = decimal.Parse(lon);
+            decimal latitude;
+            decimal longitude;
+
+            // Если передан город — получаем координаты из сервиса
+            if (!string.IsNullOrEmpty(city))
+            {
+                (latitude, longitude) = cityService.GetCoordinates(city);
+            }
+            else if (!string.IsNullOrEmpty(lat) && !string.IsNullOrEmpty(lon))
+            {
+                latitude = decimal.Parse(lat);
+                longitude = decimal.Parse(lon);
+            }
+            else
+            {
+                return TypedResults.BadRequest(
+                    Status.Create(400, "provide either city or coordinates"));
+            }
 
             var weather = await controller.GetCurrentWeather(
                 latitude, longitude, provider);
