@@ -58,4 +58,19 @@ public class CityCoordinatesServiceTests
 
         Assert.Contains("Нью-Йорк", exception.Message);
     }
+
+    [Fact]
+    public void GetCoordinates_AllCities_ReturnValidCoordinates()
+    {
+        var service = new CityCoordinatesService();
+
+        var cities = new[] { "Минск", "Лондон", "Токио", "Шанхай", "Варшава" };
+
+        foreach (var city in cities)
+        {
+            var (lat, lon) = service.GetCoordinates(city);
+            Assert.NotEqual(0m, lat);
+            Assert.NotEqual(0m, lon);
+        }
+    }
 }

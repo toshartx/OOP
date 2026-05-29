@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Forecast.Controllers;
 using Forecast.Models.Weather;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forecast.Api;
-
+[ExcludeFromCodeCoverage]
 public static class ForecastApi
 {
     public static RouteGroupBuilder MapForecastApi(this RouteGroupBuilder groups)

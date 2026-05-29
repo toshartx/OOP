@@ -110,4 +110,45 @@ public class MultiLocationControllerTests
             () => controller.GetMultiLocationTemperature(locations)
         );
     }
+
+    [Fact]
+    public async Task GetMultiLocationTemperature_WithGoogleProvider_Works()
+    {
+        var mockClient = new Mock<IWeatherDataClient>();
+        mockClient.Setup(c => c.LocationCurrentTemperature(It.IsAny<decimal>(), It.IsAny<decimal>()))
+            .ReturnsAsync(12m);
+
+        var mockFactory = new Mock<IWeatherProviderFactory>();
+        mockFactory.Setup(f => f.GetProvider("googleweather")).Returns(mockClient.Object);
+
+        var cityService = new CityCoordinatesService();
+        var controller = new MultiLocationController(mockFactory.Object, cityService);
+
+        var result = await controller.GetMultiLocationTemperature(
+            new List<string> { "Токио", "Шанхай" }, "googleweather");
+
+        Assert.Equal(2, result.Count);
+        mockFactory.Verify(f => f.GetProvider("googleweather"), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetMultiLocationTemperature_WithCoordinates_Works()
+    {
+        var mockClient = new Mock<IWeatherDataClient>();
+        mockClient.Setup(c => c.LocationCurrentTemperature(53.9m, 27.5m)).ReturnsAsync(10m);
+        mockClient.Setup(c => c.LocationCurrentTemperature(51.5m, -0.1m)).ReturnsAsync(15m);
+
+        var mockFactory = new Mock<IWeatherProviderFactory>();
+        mockFactory.Setup(f => f.GetProvider(It.IsAny<string>())).Returns(mockClient.Object);
+
+        var cityService = new CityCoordinatesService();
+        var controller = new MultiLocationController(mockFactory.Object, cityService);
+
+        var result = await controller.GetMultiLocationTemperature(
+            new List<string> { "53.9,27.5", "51.5,-0.1" });
+
+        Assert.Equal(2, result.Count);
+        Assert.Equal(10m, result[0].Temperature);
+        Assert.Equal(15m, result[1].Temperature);
+    }
 }

@@ -53,3 +53,5 @@ app.MapGroup("/api/v1").MapForecastApi();
 app.MapGroup("/api/v1").MapMultiLocationApi();
 
 app.Run();
+
+public partial class Program { }

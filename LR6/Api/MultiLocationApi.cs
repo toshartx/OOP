@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Forecast.Controllers;
 using Forecast.Models.Weather;
 using Forecast.Shared.Responses;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Forecast.Api;
-
+[ExcludeFromCodeCoverage]
 public static class MultiLocationApi
 {
     public static RouteGroupBuilder MapMultiLocationApi(this RouteGroupBuilder groups)
