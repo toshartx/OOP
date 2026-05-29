@@ -36,6 +36,7 @@ builder.Services.AddSingleton<IWeatherProviderFactory, WeatherProviderFactory>()
 // Регистрация контроллера
 builder.Services.AddSingleton<CurrentWeatherController>();
 builder.Services.AddSingleton<ForecastController>();
+builder.Services.AddSingleton<MultiLocationController>();
 
 var app = builder.Build();
 
@@ -49,5 +50,6 @@ if (app.Environment.IsDevelopment())
 
 app.MapGroup("/api/v1").MapCurrentWeatherApi();
 app.MapGroup("/api/v1").MapForecastApi();
+app.MapGroup("/api/v1").MapMultiLocationApi();
 
 app.Run();

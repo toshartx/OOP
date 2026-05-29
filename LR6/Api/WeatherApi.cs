@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Globalization;
 using Forecast.Controllers;
 using Forecast.Models.Weather;
 using Forecast.Services;
@@ -50,8 +51,8 @@ public static class WeatherApi
             }
             else if (!string.IsNullOrEmpty(lat) && !string.IsNullOrEmpty(lon))
             {
-                latitude = decimal.Parse(lat);
-                longitude = decimal.Parse(lon);
+                latitude = decimal.Parse(lat, CultureInfo.InvariantCulture);
+                longitude = decimal.Parse(lon, CultureInfo.InvariantCulture);
             }
             else
             {
