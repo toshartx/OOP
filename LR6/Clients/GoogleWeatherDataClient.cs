@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.Json.Serialization;
+using Forecast.Models.Weather;
 using Forecast.Utils;
 
 namespace Forecast.Clients;
@@ -46,6 +47,11 @@ public class GoogleWeatherDataClient : IWeatherDataClient
             throw new ApiCallException(
                 $"failed to call google weather: {e.Message}", e);
         }
+    }
+
+    public Task<List<ForecastDay>> LocationForecast(decimal latitude, decimal longitude, int days)
+    {
+        throw new NotImplementedException();
     }
 }
 

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
+using Forecast.Models.Weather;
 using Forecast.Utils;
 
 namespace Forecast.Clients;
@@ -41,6 +42,11 @@ public class OpenWeatherDataClient : IWeatherDataClient
         {
             throw new ApiCallException($"failed to call openweather: {e.Message}.", inner: e);
         }
+    }
+
+    public Task<List<ForecastDay>> LocationForecast(decimal latitude, decimal longitude, int days)
+    {
+        throw new NotImplementedException();
     }
 }
 
