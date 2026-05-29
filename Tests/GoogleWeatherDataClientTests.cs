@@ -10,13 +10,18 @@ namespace Tests;
 
 public class GoogleWeatherDataClientTests
 {
-    // Тест 1: Успешный запрос к Google Weather API
+    // Тест 1: Успешный запрос текущей температуры
     [Fact]
     public async Task LocationCurrentTemperature_ValidResponse_ReturnsTemperature()
     {
         // Arrange
         var mockHandler = new Mock<HttpMessageHandler>();
-        var responseJson = "{\"current\":{\"temp\":23.5}}";
+        var responseJson = @"{
+            ""temperature"": {
+                ""degrees"": 23.5,
+                ""unit"": ""CELSIUS""
+            }
+        }";
 
         mockHandler
             .Protected()
@@ -33,13 +38,12 @@ public class GoogleWeatherDataClientTests
 
         var httpClient = new HttpClient(mockHandler.Object);
 
-        // Настраиваем IConfiguration через индексатор, а не GetValue
         var configMock = new Mock<IConfiguration>();
         var baseUrlSectionMock = new Mock<IConfigurationSection>();
         var apiKeySectionMock = new Mock<IConfigurationSection>();
 
         baseUrlSectionMock.Setup(s => s.Value)
-            .Returns("https://api.google.com/weather");
+            .Returns("https://weather.googleapis.com/v1/");
         apiKeySectionMock.Setup(s => s.Value)
             .Returns("test-key");
 
@@ -83,7 +87,7 @@ public class GoogleWeatherDataClientTests
         var baseUrlSectionMock = new Mock<IConfigurationSection>();
         var apiKeySectionMock = new Mock<IConfigurationSection>();
 
-        baseUrlSectionMock.Setup(s => s.Value).Returns("https://test.com");
+        baseUrlSectionMock.Setup(s => s.Value).Returns("https://weather.googleapis.com/v1/");
         apiKeySectionMock.Setup(s => s.Value).Returns("test");
 
         configMock
@@ -101,7 +105,7 @@ public class GoogleWeatherDataClientTests
         );
     }
 
-    // Тест 3: Проверка формата запроса
+    // Тест 3: Проверка формата запроса текущей погоды
     [Fact]
     public async Task LocationCurrentTemperature_SendsCorrectRequest()
     {
@@ -120,7 +124,7 @@ public class GoogleWeatherDataClientTests
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
-                Content = new StringContent("{\"current\":{\"temp\":10.0}}")
+                Content = new StringContent(@"{""temperature"":{""degrees"":10.0}}")
             });
 
         var httpClient = new HttpClient(mockHandler.Object);
@@ -130,7 +134,7 @@ public class GoogleWeatherDataClientTests
         var apiKeySectionMock = new Mock<IConfigurationSection>();
 
         baseUrlSectionMock.Setup(s => s.Value)
-            .Returns("https://api.google.com/weather");
+            .Returns("https://weather.googleapis.com/v1/");
         apiKeySectionMock.Setup(s => s.Value)
             .Returns("my-api-key");
 
@@ -148,30 +152,68 @@ public class GoogleWeatherDataClientTests
 
         // Assert
         Assert.NotNull(capturedRequest);
-        Assert.Contains("lat=53.9", capturedRequest!.RequestUri!.Query);
-        Assert.Contains("lon=27.5", capturedRequest.RequestUri.Query);
+        Assert.Contains("currentConditions:lookup", capturedRequest!.RequestUri!.AbsoluteUri);
+        Assert.Contains("lat", capturedRequest.RequestUri.Query);
+        Assert.Contains("lon", capturedRequest.RequestUri.Query);
         Assert.Contains("key=my-api-key", capturedRequest.RequestUri.Query);
     }
 
+    // Тест 4: Успешный запрос прогноза
     [Fact]
     public async Task LocationForecast_ValidResponse_ReturnsForecastDays()
     {
         // Arrange
         var mockHandler = new Mock<HttpMessageHandler>();
         var responseJson = @"{
-        ""daily"": [
-            {
-                ""dt"": ""2024-01-15"",
-                ""temp"": { ""day"": 22.5 },
-                ""weather"": [{ ""description"": ""sunny"" }]
-            },
-            {
-                ""dt"": ""2024-01-16"",
-                ""temp"": { ""day"": 18.3 },
-                ""weather"": [{ ""description"": ""cloudy"" }]
-            }
-        ]
-    }";
+            ""forecastDays"": [
+                {
+                    ""displayDate"": {
+                        ""year"": 2024,
+                        ""month"": 1,
+                        ""day"": 15
+                    },
+                    ""maxTemperature"": {
+                        ""degrees"": 25.0,
+                        ""unit"": ""CELSIUS""
+                    },
+                    ""minTemperature"": {
+                        ""degrees"": 20.0,
+                        ""unit"": ""CELSIUS""
+                    },
+                    ""daytimeForecast"": {
+                        ""weatherCondition"": {
+                            ""description"": {
+                                ""text"": ""Sunny"",
+                                ""languageCode"": ""en""
+                            }
+                        }
+                    }
+                },
+                {
+                    ""displayDate"": {
+                        ""year"": 2024,
+                        ""month"": 1,
+                        ""day"": 16
+                    },
+                    ""maxTemperature"": {
+                        ""degrees"": 20.0,
+                        ""unit"": ""CELSIUS""
+                    },
+                    ""minTemperature"": {
+                        ""degrees"": 16.0,
+                        ""unit"": ""CELSIUS""
+                    },
+                    ""daytimeForecast"": {
+                        ""weatherCondition"": {
+                            ""description"": {
+                                ""text"": ""Cloudy"",
+                                ""languageCode"": ""en""
+                            }
+                        }
+                    }
+                }
+            ]
+        }";
 
         mockHandler
             .Protected()
@@ -192,7 +234,7 @@ public class GoogleWeatherDataClientTests
         var baseUrlSectionMock = new Mock<IConfigurationSection>();
         var apiKeySectionMock = new Mock<IConfigurationSection>();
 
-        baseUrlSectionMock.Setup(s => s.Value).Returns("https://test.com");
+        baseUrlSectionMock.Setup(s => s.Value).Returns("https://weather.googleapis.com/v1/");
         apiKeySectionMock.Setup(s => s.Value).Returns("test-key");
 
         configMock.Setup(c => c.GetSection("GOOGLE_WEATHER_BASE_URL"))
@@ -208,9 +250,9 @@ public class GoogleWeatherDataClientTests
         // Assert
         Assert.NotNull(forecast);
         Assert.Equal(2, forecast.Count);
-        Assert.Equal(22.5m, forecast[0].Temperature);
-        Assert.Equal("sunny", forecast[0].Condition);
-        Assert.Equal(18.3m, forecast[1].Temperature);
-        Assert.Equal("cloudy", forecast[1].Condition);
+        Assert.Equal(22.5m, forecast[0].Temperature); // (25+20)/2
+        Assert.Equal("Sunny", forecast[0].Condition);
+        Assert.Equal(18.0m, forecast[1].Temperature); // (20+16)/2
+        Assert.Equal("Cloudy", forecast[1].Condition);
     }
 }
