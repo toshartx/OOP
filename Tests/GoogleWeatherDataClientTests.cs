@@ -152,4 +152,65 @@ public class GoogleWeatherDataClientTests
         Assert.Contains("lon=27.5", capturedRequest.RequestUri.Query);
         Assert.Contains("key=my-api-key", capturedRequest.RequestUri.Query);
     }
+
+    [Fact]
+    public async Task LocationForecast_ValidResponse_ReturnsForecastDays()
+    {
+        // Arrange
+        var mockHandler = new Mock<HttpMessageHandler>();
+        var responseJson = @"{
+        ""daily"": [
+            {
+                ""dt"": ""2024-01-15"",
+                ""temp"": { ""day"": 22.5 },
+                ""weather"": [{ ""description"": ""sunny"" }]
+            },
+            {
+                ""dt"": ""2024-01-16"",
+                ""temp"": { ""day"": 18.3 },
+                ""weather"": [{ ""description"": ""cloudy"" }]
+            }
+        ]
+    }";
+
+        mockHandler
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>()
+            )
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(responseJson)
+            });
+
+        var httpClient = new HttpClient(mockHandler.Object);
+
+        var configMock = new Mock<IConfiguration>();
+        var baseUrlSectionMock = new Mock<IConfigurationSection>();
+        var apiKeySectionMock = new Mock<IConfigurationSection>();
+
+        baseUrlSectionMock.Setup(s => s.Value).Returns("https://test.com");
+        apiKeySectionMock.Setup(s => s.Value).Returns("test-key");
+
+        configMock.Setup(c => c.GetSection("GOOGLE_WEATHER_BASE_URL"))
+            .Returns(baseUrlSectionMock.Object);
+        configMock.Setup(c => c.GetSection("GOOGLE_WEATHER_API_KEY"))
+            .Returns(apiKeySectionMock.Object);
+
+        var client = new GoogleWeatherDataClient(configMock.Object, httpClient);
+
+        // Act
+        var forecast = await client.LocationForecast(53.9m, 27.5m, 2);
+
+        // Assert
+        Assert.NotNull(forecast);
+        Assert.Equal(2, forecast.Count);
+        Assert.Equal(22.5m, forecast[0].Temperature);
+        Assert.Equal("sunny", forecast[0].Condition);
+        Assert.Equal(18.3m, forecast[1].Temperature);
+        Assert.Equal("cloudy", forecast[1].Condition);
+    }
 }
