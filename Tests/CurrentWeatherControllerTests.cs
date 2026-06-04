@@ -21,6 +21,7 @@ public class CurrentWeatherControllerTests
         var mockFactory = new Mock<IWeatherProviderFactory>();
         mockFactory
             .Setup(f => f.GetProvider("openweather"))
+
             .Returns(mockClient.Object);
 
         var controller = new CurrentWeatherController(mockFactory.Object);
